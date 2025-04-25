@@ -5,7 +5,7 @@ import pickle
 
 # Chessboard dimensions (number of inner corners per row and column)
 chessboardSize = (7, 7)
-frameSize = (1920, 1080)
+frameSize = (2048, 1080)
 
 # Size of each square in the chessboard (in millimeters)
 size_of_chessboard_squares_mm = 24
@@ -23,7 +23,7 @@ objpoints = []  # 3D points in real-world space
 imgpoints = []  # 2D points in image plane
 
 # Load calibration images
-images = glob.glob('cameraCalibration/images_2/*.jpg')
+images = glob.glob('cameraCalibration/images/*.jpg')
 
 for image in images:
     img = cv.imread(image)
@@ -48,7 +48,7 @@ cv.destroyAllWindows()
 ret, cameraMatrix, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, frameSize, None, None)
 
 # Save the calibration results
-with open("calibration_2.pkl", "wb") as f:
+with open("calibration_1.pkl", "wb") as f:
     pickle.dump((cameraMatrix, dist), f)
 
 

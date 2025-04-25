@@ -17,7 +17,7 @@ def undisort_frame(frame, cameraMatrix, dist):
 
 
 # Load the calibration data
-with open("calibration_2.pkl", "rb") as f:
+with open("calibration_1.pkl", "rb") as f:
     cameraMatrix, dist = pickle.load(f)
 
 # Initialize the webcam
