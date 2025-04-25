@@ -1,28 +1,52 @@
 import cv2
 import numpy as np
+import pickle
+
+def undisort_frame(frame, cameraMatrix, dist):
+    h, w = frame.shape[:2]
+    # Get the optimal new camera matrix and ROI
+    new_camera_matrix, roi = cv2.getOptimalNewCameraMatrix(cameraMatrix, dist, (w, h), 0, (w, h))
+
+    # Undistort the image
+    undistorted_frame = cv2.undistort(frame, cameraMatrix, dist, None, new_camera_matrix)
+
+    # Crop the image to the valid ROI
+    x, y, w, h = roi
+    cropped_frame = undistorted_frame[y:y + h, x:x + w]
+
+    return cropped_frame
 
 
-def calibrate_camera(img):
-    # Chessboard parameters
-    chessboardSize = (7, 7)
-    size_of_chessboard_squares_mm = 24
+# Load the calibration data
+with open("calibration_1.pkl", "rb") as f:
+    cameraMatrix, dist = pickle.load(f)
 
-    found, corners = cv2.findChessboardCorners(img, chessboardSize, cv2.CALIB_CB_ADAPTIVE_THRESH)
+# Initialize the webcam
+cap = cv2.VideoCapture(0)
 
-    print(found)
+# Check if the webcam is opened successfully
+if not cap.isOpened():
+    print("Error: Could not open webcam")
+    exit()
 
-    cv2.drawChessboardCorners(img, chessboardSize, corners, found)
+while True:
+    # Read a frame from the webcam
+    ret, frame = cap.read()
 
-    cv2.imshow('img', img)
+    if not ret:
+        print("Error: Could not read frame")
+        break
 
-    cv2.waitKey(0)
+    # Undistort the frame
+    undistorted_frame = undisort_frame(frame, cameraMatrix, dist)
 
-    cv2.destroyAllWindows()
+    # Display the frame
+    cv2.imshow('Undistorted Frame', undistorted_frame)
 
-    # Perform camera calibration
+    # Check for 'q' key press
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-# path = '/Users/rahi/Code/camera_calibration/cameraCalibration/images/image_20250127_183643_0.jpg'
-path = 'cameraCalibration/images/image_20250127_183740_21.jpg'
-
-img = cv2.imread(path)
-calibrate_camera(img)
+# Release the webcam and close all OpenCV windows
+cap.release()
+cv2.destroyAllWindows()

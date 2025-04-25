@@ -5,7 +5,7 @@ import pickle
 
 # Chessboard dimensions (number of inner corners per row and column)
 chessboardSize = (7, 7)
-frameSize = (2048, 1080)
+frameSize = (1920, 1080)
 
 # Size of each square in the chessboard (in millimeters)
 size_of_chessboard_squares_mm = 24
